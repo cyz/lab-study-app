@@ -1,77 +1,149 @@
-# Step 2: Check your environment
+# Step 2: Application Structure Overview
 
 > **Summary:**
-> In this step, you'll verify that your environment is set up correctly by running a test script. The script checks your application structure, validates your GitHub token, tests connectivity to the AI service, and confirms that all dependencies are installed.
+> In this step, you'll explore the Next.js application structure, understand the file organization, and learn how the components interact with each other.
 
-The `test_setup.py` script is a diagnostic tool that performs a series of checks to ensure your environment is correctly configured. Specifically, it:
+## Understanding Next.js App Structure
 
-* **Checks the application structure**: Confirms that all necessary files are present (e.g., `app/main.py`, `app/services/github_client.py`).
-* **Validates the GitHub token**: Looks for the `GITHUB_TOKEN` variable in your `.env` file and ensures it is set.
-* **Tests connectivity to the AI service**: Sends a test request to the GitHub AI models service using your token to verify service access and permissions.
-* **Confirms dependencies**: Verifies that all required Python libraries are installed.
+The StudyPlan AI application follows Next.js 13+ App Router conventions. Let's explore the key directories and files:
 
-## ⌨️ Activity: Test Your Configuration
+### Project Structure
 
-1. Before running the test, you need to implement the `check_dependencies` function to verify all required packages are installed. Open the file `test_setup.py`, then in the **Copilot Chat** panel and select the **Edit** mode.
-
-   <details>
-      <summary>📸 Show screenshot</summary>
-      <img src="images/2-edit-mode.png" alt="Screenshot of Ports tab" />
-   </details>
-
-2. Ask Copilot to update the function:
-
-  > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social\&logo=github%20copilot)
-  >
-  > ```prompt
-  > Update the check_dependencies function to read the packages from requirements.txt and attempt to import each one. Print "✅ Dependencies imported successfully" in the final results list when all dependencies are installed. If any are missing, list the missing packages.
-  > ```
-
-3. Review the implementation to ensure it correctly verifies all dependencies from the requirements.txt file.
-
-4. Open your terminal and verify your setup by running:
-
-```bash
-python test_setup.py
+```
+nextjs-app/
+├── app/
+│   ├── api/               # API Routes
+│   │   └── generate-plan/ # Study plan generation endpoint
+│   ├── layout.tsx         # Root layout component
+│   └── page.tsx           # Home page component
+├── components/            # React components
+│   ├── StudyPlanForm.tsx # Form for user input
+│   └── StudyPlanDisplay.tsx # Display generated plans
+├── lib/                   # Utility functions
+│   ├── githubClient.ts   # GitHub AI Models client
+│   └── prompts.ts        # AI prompt templates
+├── public/               # Static assets
+├── .env.local           # Environment variables (not committed)
+├── package.json         # Dependencies and scripts
+└── tailwind.config.js   # Tailwind CSS configuration
 ```
 
-**Expected result:**
+### Key Components
 
-```text
-✅ Application structure verified
-✅ GITHUB_TOKEN found
-✅ GitHub Models working - Response: OK  
-✅ Dependencies imported successfully
-🎉 Setup complete! Everything ready to run the application.
-```
+1. **API Routes (`app/api/`)**: Server-side endpoints that handle requests and communicate with GitHub AI Models.
+
+2. **Pages (`app/`)**: React components that render the user interface using server and client components.
+
+3. **Components (`components/`)**: Reusable React components for forms, displays, and UI elements.
+
+4. **Libraries (`lib/`)**: Utility functions, API clients, and helper modules.
+
+## ⌨️ Activity: Explore the Application Structure
+
+1. In the **Copilot Chat** panel, switch to **Ask** mode and request an overview:
+
+   > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
+   >
+   > ```prompt
+   > Explain the Next.js app structure in this project. What is the purpose of each main directory?
+   > ```
+
+2. Open `nextjs-app/package.json` and review the dependencies. Notice the key packages:
+   - `next`: The Next.js framework
+   - `react` and `react-dom`: React library for building UI
+   - `tailwindcss`: Utility-first CSS framework
+   - `typescript`: Type-safe JavaScript
+
+3. Examine the `nextjs-app/app/layout.tsx` file. This is the root layout that wraps all pages:
+
+   ```bash
+   cat nextjs-app/app/layout.tsx
+   ```
+
+4. Check the main page at `nextjs-app/app/page.tsx`:
+
+   ```bash
+   cat nextjs-app/app/page.tsx
+   ```
+
+## ⌨️ Activity: Understanding API Routes
+
+Next.js API Routes allow you to create backend endpoints without a separate server. Let's explore how they work:
+
+1. Navigate to `nextjs-app/app/api/` directory and list the available routes:
+
+   ```bash
+   ls -la nextjs-app/app/api/
+   ```
+
+2. Use Copilot to understand the API structure:
+
+   > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
+   >
+   > ```prompt
+   > How do Next.js API routes work? Show me examples from this project.
+   > ```
+
+3. The API routes in Next.js 13+ use the App Router pattern:
+   - Each route is a `route.ts` or `route.js` file
+   - They export functions named after HTTP methods (`GET`, `POST`, etc.)
+   - They receive `Request` objects and return `Response` objects
+
+<details>
+  <summary>🤔 How it works?</summary><br/>
+
+Next.js API Routes run on the server and can:
+- Access environment variables securely
+- Make external API calls
+- Process data before sending to the client
+- Handle authentication and authorization
+
+This architecture keeps sensitive operations (like API keys) on the server while providing a seamless API for the frontend.
+
+</details>
+
+## ⌨️ Activity: Verify the Development Environment
+
+Let's ensure everything is configured correctly:
+
+1. Check that the development server is running:
+
+   ```bash
+   # If not running, start it
+   npm run dev
+   ```
+
+2. Open your browser to `http://localhost:3000` (or use the Ports tab in Codespaces)
+
+3. Verify you can see the StudyPlan AI interface
+
+4. Open the browser's Developer Tools (F12) and check the Console for any errors
 
 <details>
   <summary>🤷 Having trouble?</summary>
 
-1. **GitHub token issues:**
+1. **Port already in use:**
+   ```bash
+   # Kill the process on port 3000
+   npx kill-port 3000
+   # Then restart
+   npm run dev
+   ```
 
-   * Ensure it is copied correctly (no extra spaces)
-   * Confirm the `read:user` scope is enabled
-   * Use a classic token, not fine-grained
+2. **Dependencies not installed:**
+   ```bash
+   # Reinstall dependencies
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
 
-2. **Dependency errors:**
-
-```bash
-# Update pip
-python -m pip install --upgrade pip
-
-# Reinstall dependencies
-pip install -r requirements.txt
-```
-
-3. **Python not found locally:**
-
-   * Windows: Install from [python.org](https://python.org)
-   * Ensure Python version is 3.9 or higher
+3. **Environment variables missing:**
+   - Ensure `.env.local` exists with your `GITHUB_TOKEN`
+   - Restart the development server after adding environment variables
 
 </details>
 
 ---
 
-| [← Introduction to StudyPlan App and Environment Setup](01-step.md) | [Next: Backend and AI Integration →](03-step.md) |
+| [← Introduction to StudyPlan App and Environment Setup](01-step.md) | [Next: API Routes and AI Integration →](03-step.md) |
 |:-----------------------------------|------------------------------------------:|

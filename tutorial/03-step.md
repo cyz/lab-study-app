@@ -1,64 +1,128 @@
-# Step 3: Backend and AI Integration
+# Step 3: API Routes and AI Integration
 
 > **Summary:**
-> In this step, you'll implement the core functionality of StudyPlan AI by connecting the backend to GitHub's AI models and creating the API endpoint that powers the application.
+> In this step, you'll implement the Next.js API route that connects to GitHub's AI models and handles study plan generation requests.
 
-## StudyPlan App Overview
+## Next.js API Routes Overview
 
-StudyPlan AI follows a clear processing flow, starting from user input and ending with a personalized study plan:
-
-1. **User Input:** The user fills out a form on the web interface with their profile information (area of interest, current skill level, available study time).
-
-2. **API Layer (`app/api/api.py`):** Receives the request, validates the data, and maps it to the appropriate model objects.
-
-3. **Prompts Service (`app/services/prompts.py`):** Formats the user's information into structured instructions for the AI model, designed to produce optimal results.
-
-4. **GitHub Client (`app/services/github_client.py`):** Sends the formatted instructions to GitHub Models and waits for the AI response.
-
-5. **Response Handling:** The AI-generated response is processed, formatted, and returned to the user through the web interface as a structured, personalized study plan.
+In Next.js 13+ with the App Router, API routes are created as `route.ts` files inside the `app/api/` directory. These routes handle HTTP requests and can communicate with external services like GitHub AI Models.
 
 ## ⌨️ Activity: Implement the GitHub Models Client
 
-The GitHub Models client is essential for communicating with AI services. It handles authentication, request formatting, and response processing, enabling StudyPlan AI to generate personalized content. In this activity, we'll implement the client that communicates with GitHub's AI capabilities.
+The GitHub Models client is essential for communicating with AI services. Let's implement it using TypeScript and the Azure AI Inference library.
 
-1. Open `app/services/github_client.py`. You will see the `GitHubModelsClient` class with some pre-defined structure, including initialization and configuration methods.
+1. Open or create `nextjs-app/lib/githubClient.ts`. This file will contain the client that communicates with GitHub's AI capabilities.
 
-2. In the `GitHubModelsClient` class, right-click on the class name and select **Explain this** from the GitHub Copilot context menu to understand its structure and intended behavior.
+2. Open the **Copilot Chat** panel, switch to **Agent** mode, and ask Copilot to implement the client:
 
-3. Open the **Copilot Chat** panel, switch to **Agent** mode, and ask Copilot to implement the client using the Azure AI Inference library with the following prompt:
-
-    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social\&logo=github%20copilot)
+    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
     >
     > ```prompt
-    > Implement the GitHub Models client using Azure AI Inference library:
+    > Create a GitHub Models client in TypeScript using these requirements:
     >
-    > - First install the required package: pip install azure-ai-inference
-    > - Use ChatCompletionsClient from azure.ai.inference
-    > - Use SystemMessage and UserMessage from azure.ai.inference.models
-    > - Connect to the endpoint https://models.github.ai/inference
-    > - Use the model openai/gpt-4o-mini
-    > - Implement a fallback mock response for testing
-    > - Handle errors and provide detailed error messages
+    > - Use ModelClient from @azure-rest/ai-inference
+    > - Use AzureKeyCredential from @azure/core-auth  
+    > - Connect to https://models.inference.ai.azure.com
+    > - Use the model gpt-4o-mini
+    > - Include proper TypeScript types for requests and responses
+    > - Handle errors with detailed error messages
+    > - Add JSDoc comments for documentation
     > ```
-
-> [!IMPORTANT]
-> When you submit this prompt, Copilot Chat may request permission to install the Azure AI Inference package.
-> - Click **Continue** in the chat window to authorize the installation
->
-> - Click **Keep** when prompted to save the changes to the requirements file
->
-> This package is essential for establishing communication with the GitHub Models API and enabling AI-powered study plan generation.
 
 <details>
   <summary>🤔 How it works?</summary><br/>
 
-The **GitHubModelsClient** implementation integrates with GitHub's AI models to generate personalized study plans. It uses the **Azure AI Inference library** to establish secure connections with the GitHub Models API endpoint, handles authentication through **GitHub tokens**, and converts user messages into the appropriate format for AI processing. 
+The **GitHubModelsClient** integrates with GitHub's AI models to generate personalized study plans. It uses the **Azure AI Inference library** to establish secure connections, handles authentication through **GitHub tokens** from environment variables, and formats messages for AI processing.
 
-The client includes a **fallback mechanism** that automatically switches to mock responses when the API is unavailable, ensuring the application remains functional during development and testing.
+The client includes proper error handling to ensure the application remains functional and provides meaningful feedback when issues occur.
+
+</details>
+
+## ⌨️ Activity: Create the API Route
+
+Now let's create the API endpoint that will receive requests from the frontend and return AI-generated study plans.
+
+1. Create or open `nextjs-app/app/api/generate-plan/route.ts`.
+
+2. Use Copilot to implement the POST handler:
+
+    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
+    >
+    > ```prompt
+    > Implement a Next.js API route POST handler for study plan generation:
+    >
+    > - Parse JSON request body with area, level, weekly_hours, duration_months, specific_objectives
+    > - Validate that all required fields are present
+    > - Use the GitHub Models client to generate a study plan
+    > - Return JSON response with the generated plan
+    > - Include proper error handling with appropriate HTTP status codes
+    > - Add TypeScript types for request and response
+    > ```
+
+3. The API route should follow this pattern:
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    // Validate input
+    // Call AI service
+    // Return response
+    return NextResponse.json({ success: true, plan: '...' });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: 'Error message' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+## ⌨️ Activity: Test the API Endpoint
+
+Let's test the API endpoint to ensure it's working correctly:
+
+1. With the development server running (`npm run dev`), open a new terminal.
+
+2. Test the endpoint using curl:
+
+```bash
+curl -X POST http://localhost:3000/api/generate-plan \
+  -H "Content-Type: application/json" \
+  -d '{
+    "area": "backend",
+    "level": "beginner",
+    "weekly_hours": 10,
+    "duration_months": 3,
+    "specific_objectives": "Learn Node.js and build REST APIs"
+  }'
+```
+
+3. You should receive a JSON response with the generated study plan.
+
+<details>
+  <summary>🤷 Having trouble?</summary>
+
+1. **401 Unauthorized Error:**
+   - Verify your `.env.local` file has the correct `GITHUB_TOKEN`
+   - Ensure the token has `read:user` scope
+   - Restart the development server after adding the token
+
+2. **Module not found errors:**
+   ```bash
+   npm install @azure-rest/ai-inference @azure/core-auth
+   ```
+
+3. **TypeScript errors:**
+   - Ensure `tsconfig.json` is properly configured
+   - Check that all imports are correct
+   - Run `npm run build` to see detailed type errors
 
 </details>
 
 ---
 
-| [← Check your environment](02-step.md) | [Next: Data Models and API Endpoint →](04-step.md) |
+| [← Application Structure Overview](02-step.md) | [Next: Building the User Interface →](04-step.md) |
 |:-----------------------------------|------------------------------------------:|

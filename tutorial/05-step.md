@@ -1,53 +1,140 @@
 # Step 5: Crafting Prompts for AI
 
 > **Summary:**
-> In this step, you’ll learn how to craft prompts for AI content generation via API requests. You’ll implement a structured prompt system for StudyPlan AI, test it in different scenarios, and refine it iteratively to produce high-quality study plans.
+> In this step, you'll learn how to craft effective prompts for AI content generation. You'll implement a structured prompt system that produces high-quality, personalized study plans.
 
-The quality of AI-generated study plans depends heavily on how prompts are written. Clear, well-structured prompts help the AI understand the context, include all the required components, and return responses in the right format. A robust prompt system usually includes two parts:
+## Understanding AI Prompts
 
-* **System Prompt** – Defines the AI’s role, tone, and behavioral guidelines. For example, you might instruct the AI to act as an educational mentor or to always provide concise, structured responses.
-* **User Prompt** – Contains the specific request and input data, usually formatted with a template to guide the AI’s output.
+The quality of AI-generated study plans depends on how prompts are written. A robust prompt system typically includes:
 
-## ⌨️ Activity: Implement the Build Study Plan Prompt Function
+* **System Message** – Defines the AI's role, expertise, and behavioral guidelines
+* **User Message** – Contains the specific request with structured data
 
-The `build_study_plan_prompt` function creates personalized prompts that guide the AI in generating relevant study plans. Let’s implement it with GitHub Copilot.
+## ⌨️ Activity: Create Prompt Templates
 
-1. **Open the prompts file** at `app/services/prompts.py`. You’ll find sample prompts and a placeholder for the function.
+Let's implement a prompt builder that creates personalized, effective prompts for study plan generation.
 
-2. Let's complete the `build_study_plan_prompt` function using Agent mode. Open the **Copilot Chat** panel, switch to **Agent** mode and provide the following instructions:
+1. Create or open `nextjs-app/lib/prompts.ts`.
 
-   > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social\&logo=github%20copilot)
+2. Use Copilot to implement the prompt functions:
+
+   > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
    >
    > ```prompt
-   > Complete the `build_study_plan_prompt` function so that it returns a list of messages:
+   > Create TypeScript functions for building AI prompts with these requirements:
    >
-   > **System prompt should include:**
-   > - You're an education specialist with 10+ years of experience
-   > - Always respond in the user's preferred language
-   > - Create practical, structured, and realistic plans
-   > - Include hands-on projects and specific resources
+   > **System Prompt Function:**
+   > - Define the AI as an education specialist with 10+ years of experience
+   > - Instruct to create practical, structured, and realistic plans
+   > - Request inclusion of hands-on projects and specific resources
+   > - Emphasize progressive learning and clear milestones
    >
-   > **User prompt should include:**
-   > - Template with variables: area, level, time, duration, goals
-   > - Request for detailed weekly schedule
-   > - Request for specific resources (courses, books, tools)
-   > - Request for progressive practical projects
-   > - Request for monthly evaluation milestones
+   > **User Prompt Function:**
+   > - Accept parameters: area, level, weeklyHours, durationMonths, objectives
+   > - Create a detailed request template using these parameters
+   > - Request weekly schedules, specific resources, practical projects
+   > - Ask for monthly evaluation milestones
+   > - Return properly formatted string
+   >
+   > **Main Builder Function:**
+   > - Combine system and user prompts
+   > - Return an array of message objects compatible with Azure AI
+   > - Include proper TypeScript types and interfaces
    > ```
 
-3. Save the changes and test with sample inputs. For example:
+3. Your prompt structure should look like this:
 
-   | Area          | Level        | Weekly Time | Duration | Specific Goal                                 |
-   | ------------- | ------------ | ----------- | -------- | --------------------------------------------- |
-   | backend       | beginner     | 10          | 3        | "I want to build REST APIs with Node.js"      |
-   | frontend      | intermediate | 15          | 4        | "I need to master React and learn Next.js"    |
-   | data\_science | advanced     | 20          | 6        | "I want to implement ML models in production" |
-   | fullstack     | beginner     | 12          | 6        | "I want to create a complete web application" |
-   | ai\_ml        | intermediate | 18          | 5        | "I need to understand deep learning for NLP"  |
+```typescript
+export interface StudyPlanRequest {
+  area: string;
+  level: string;
+  weeklyHours: number;
+  durationMonths: number;
+  specificObjectives: string;
+}
 
-These examples test different areas, skill levels, and goals, giving you a clear picture of how your prompt system adapts to various scenarios.
+export function buildStudyPlanPrompt(request: StudyPlanRequest) {
+  const systemPrompt = getSystemPrompt();
+  const userPrompt = getUserPrompt(request);
+  
+  return [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: userPrompt }
+  ];
+}
+```
+
+## ⌨️ Activity: Test Different Prompt Variations
+
+Let's test how different prompts affect the AI's output quality.
+
+1. Create a test file or use the Copilot Chat to test prompts:
+
+   > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
+   >
+   > ```prompt
+   > Show me how the buildStudyPlanPrompt function output looks for these examples:
+   >
+   > 1. Backend beginner, 10 hours/week, 3 months, "Build REST APIs with Node.js"
+   > 2. Frontend intermediate, 15 hours/week, 4 months, "Master React and Next.js"
+   > 3. Data Science advanced, 20 hours/week, 6 months, "Implement ML models in production"
+   > ```
+
+2. Review the generated prompts and adjust if needed to ensure they:
+   - Are clear and specific
+   - Include all relevant context
+   - Request structured output
+   - Emphasize practical, actionable content
+
+## ⌨️ Activity: Integrate Prompts with API Route
+
+Now let's use the prompt builder in our API route.
+
+1. Open `nextjs-app/app/api/generate-plan/route.ts`.
+
+2. Import and use the prompt builder:
+
+```typescript
+import { buildStudyPlanPrompt } from '@/lib/prompts';
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    
+    // Build the prompt
+    const messages = buildStudyPlanPrompt(body);
+    
+    // Call AI service with the prompt
+    const response = await githubClient.chat(messages);
+    
+    return NextResponse.json({ success: true, plan: response });
+  } catch (error) {
+    // Error handling
+  }
+}
+```
+
+## Best Practices for AI Prompts
+
+1. **Be Specific**: Clearly state what you want the AI to generate
+2. **Provide Context**: Include relevant background information
+3. **Structure Requests**: Ask for organized, formatted output
+4. **Set Constraints**: Specify limits (time, resources, complexity)
+5. **Iterate**: Test and refine prompts based on output quality
+
+## Example Prompt Scenarios
+
+| Area | Level | Weekly Time | Duration | Specific Goal |
+|------|-------|-------------|----------|---------------|
+| Backend | Beginner | 10 hours | 3 months | "Build REST APIs with Node.js and Express" |
+| Frontend | Intermediate | 15 hours | 4 months | "Master React, Next.js, and TypeScript" |
+| Data Science | Advanced | 20 hours | 6 months | "Implement ML models with Python and TensorFlow" |
+| Full Stack | Beginner | 12 hours | 6 months | "Create a complete MERN stack application" |
+| DevOps | Intermediate | 18 hours | 5 months | "Master Docker, Kubernetes, and CI/CD" |
+
+These examples test different areas, skill levels, and goals, helping you understand how your prompt system adapts to various scenarios.
 
 ---
 
-| [← Data Models and API Endpoint](04-step.md) | [Next: Adding Form Validation →](06-step.md) |
+| [← Building the User Interface](04-step.md) | [Next: Adding Form Validation →](06-step.md) |
 |:-----------------------------------|------------------------------------------:|

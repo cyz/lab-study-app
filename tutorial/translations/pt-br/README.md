@@ -1,41 +1,61 @@
-# Hands-on com o GitHub Copilot: Criando Planos de Estudo com IA utilizando Modelos do GitHub
+# Tutorial do Laboratório
 
-Este laboratório irá guiá-lo na criação de percursos de aprendizagem personalizados usando os modelos de IA do GitHub. Você trabalhará com uma aplicação web baseada em Flask que gera planos de estudo personalizados para profissionais de tecnologia com base em seus interesses, nível de habilidade e tempo disponível.
-
-Não se esqueça de [marcar este repositório com uma estrela (🌟)](https://docs.github.com/pt/get-started/exploring-projects-on-github/saving-repositories-with-stars) para encontrá-lo com mais facilidade posteriormente.
-
-➡️ Faça uma [copia deste repositório](https://github.com/cyz/lab-aug12/fork) e encontre-o em seguida nos seus próprios repositórios.
-
-## 📋 Pré-requisitos
-
-- Python 3.9+ instalado
-- VS Code ou Codespaces com a extensão GitHub Copilot
-- Conta GitHub com assinatura GitHub Copilot (disponível gratuitamente para indivíduos)
-
-## 🔍 Visão Geral do Laboratório
-
-A aplicação StudyPlan AI consiste em dois componentes principais:
-
-- Uma interface web baseada em Flask para interação do usuário.
-- Uma camada de integração de IA que utiliza os Modelos do GitHub para criar os planos de estudo com base nas preferências e informações do usuário.
-
-Você aprenderá como configurar a aplicação, criar planos de estudo personalizados e modificar os prompts de IA para aprimorar o conteúdo gerado.
+**Idiomas disponíveis**: [English](../../README.md), [Português (Brasil) (começa aqui)](README.md) e [Español](../es/README.md).
 
 ## 📚 Partes do Laboratório
 
-1. [Configuração do Ambiente e Introdução ao StudyPlan AI](01-step.md)
-2. [Visão Geral da Estrutura da Aplicação](02-step.md)
-3. [Backend e Integração com IA](03-step.md)
-4. [Modelos de Dados e Endpoint da API](04-step.md)
-5. [Elaboração de Prompts para IA](05-step.md)
-6. [Adicionando Validação de Formulário](06-step.md)
-7. [Criando Modos de Chat Personalizados para Testes de Acessibilidade](07-step.md)
-8. [Commit e Revisão de Código com GitHub Copilot](08-step.md)
-9. [Revisão e próximos passos](09-step.md)
+> **Nota:** Os tutoriais detalhados em português estão em processo de tradução. Enquanto isso, consulte a [versão em inglês](../../README.md) que foi completamente atualizada para Next.js.
 
-## 📚 Recursos
+1. [Configuração do Ambiente e Introdução ao StudyPlan AI](../../01-step.md)
+2. [Visão Geral da Estrutura da Aplicação](../../02-step.md)
+3. [Rotas de API e Integração com IA](../../03-step.md)
+4. [Construção da Interface do Usuário](../../04-step.md)
+5. [Criação de Prompts para IA](../../05-step.md)
+6. [Adicionar Validação de Formulários](../../06-step.md)
+7. [Criar Modos de Chat Personalizados para Testes de Acessibilidade](../../07-step.md)
+8. [Commit e Revisão de Código com GitHub Copilot](../../08-step.md)
+9. [Revisão e Próximos Passos](../../09-step.md)
 
-- [VS Code](https://code.visualstudio.com/)
-- [GitHub Copilot GRATUITO para VS Code](https://aka.ms/Copilot-Free/y)
-- [GitHub Models Playground](https://github.com/marketplace/models)
-- [Documentação do Flask](https://flask.palletsprojects.com/)
+## 🔄 Mudanças Importantes
+
+Esta aplicação migrou de **Python/Flask** para **Next.js/React**. As principais mudanças incluem:
+
+- **Frontend**: Agora usa React com Next.js para renderização no lado do servidor
+- **Backend**: API Routes do Next.js ao invés de Flask
+- **Estilização**: Tailwind CSS para design moderno e responsivo
+- **TypeScript**: Maior segurança de tipos e melhor experiência de desenvolvimento
+- **Arquitetura**: Aplicação full-stack moderna com hot-reload
+
+## 🚀 Início Rápido
+
+```bash
+# Instalar dependências
+npm install
+
+# Configurar token do GitHub
+# Criar .env.local e adicionar: GITHUB_TOKEN=seu_token_aqui
+
+# Iniciar servidor de desenvolvimento
+npm run dev
+
+# Abrir http://localhost:3000
+```
+
+## 📖 Recursos Adicionais
+
+- [Documentação do Next.js](https://nextjs.org/docs)
+- [Documentação do React](https://react.dev)
+- [GitHub Models](https://github.com/marketplace/models)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+
+## 💡 Principais Benefícios da Migração
+
+1. **Performance**: Renderização no servidor e otimizações automáticas
+2. **Experiência do Desenvolvedor**: Hot-reload instantâneo e TypeScript
+3. **SEO**: Melhor indexação com Server-Side Rendering
+4. **Escalabilidade**: Arquitetura moderna e preparada para crescimento
+5. **Manutenibilidade**: Código mais organizado e testável
+
+---
+
+Para o conteúdo completo e atualizado, consulte os tutoriais em [inglês](../../README.md).

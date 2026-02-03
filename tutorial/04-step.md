@@ -1,72 +1,164 @@
-# Step 4: Data Models and API Endpoint
+# Step 4: Building the User Interface
 
 > **Summary:**
-> In this step, you'll create the data models to structure requests and responses, and implement the API endpoint that connects the user interface with the AI integration.
+> In this step, you'll create React components for the study plan form and display, using modern React patterns and Tailwind CSS for styling.
 
-## Data Models and REST API
+## React Components in Next.js
 
-To complete our StudyPlan AI application, we need to create:
+Next.js 13+ uses two types of components:
 
-1. **Data Models**: Classes that define the structure of requests and responses, ensuring consistency and facilitating validation.
+- **Server Components** (default): Render on the server, can access databases and APIs directly
+- **Client Components** (with `'use client'`): Interactive components that run in the browser
 
-2. **API Endpoint**: A Flask route that receives user requests, processes the data, interacts with the GitHub Models client, and returns the generated study plan.
+## ⌨️ Activity: Create the Study Plan Form Component
 
-This step is crucial for connecting the user interface with the artificial intelligence, completing the application flow.
+Let's build the form that collects user input for generating personalized study plans.
 
-## ⌨️ Activity: Create Data Models
+1. Create or open `nextjs-app/components/StudyPlanForm.tsx`.
 
-Before implementing the API endpoint, we need to create the data models that will structure our requests and responses. These models will ensure consistent data formats and facilitate validation.
-
-1. Create a new file `app/models/study_plan.py` to define our data models.
-
-2. Use the following prompt with Copilot to implement the models:
-
-    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social\&logo=github%20copilot)
-    >
-    > ```prompt
-    > Create two data models for our study plan application:
-    > 
-    > 1. StudyPlanRequest with:
-    >    - Fields for area, level, weekly_hours, duration_months, specific_objectives
-    >
-    > 2. StudyPlanResponse with:
-    >    - Fields for structured_plan, success, metadata, error
-    > ```
-
-## ⌨️ Activity: Implement the API Endpoint
-
-With our GitHub Models client and data models ready, it's time to create the API endpoint that powers our application. This endpoint serves as the bridge between the frontend and AI, handling requests and returning personalized study plans.
-
-The endpoint receives and validates study plan requests from the frontend, processes user preferences including area, level, and time commitment, communicates with GitHub Models AI service, and returns structured educational content. By implementing this endpoint, we complete the backend infrastructure for our intelligent study plan generator.
-
-1. **Navigate to the API file** by opening `app/api/api.py` in the Explorer panel. This file contains the Flask routes that define all our API endpoints.
-
-2. **Update the imports** to use the models:
-
-```python
-from app.models.study_plan import StudyPlanRequest, StudyPlanResponse
-```
-
-3. **Open the Copilot Chat panel** and select **Edit** mode to help implement the missing functionality. Use the following prompt:
+2. Use Copilot to implement the form component:
 
     > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
     >
     > ```prompt
-    > Update the `generate_study_plan` function in Flask API to use the GitHub Models client:
-    > 
-    > - Add validation to check if github_client.token is configured
-    > - Add a try/except structure for detailed error handling
-    > - Use `build_study_plan_prompt()` with the correct parameters from StudyPlanRequest
-    > - Call `github_client.chat_completion()` asynchronously with the messages
-    > - For success case: return StudyPlanResponse with AI-generated plan
-    > - For error case: return response with success=False and detailed error message
+    > Create a React client component for a study plan form with these requirements:
+    >
+    > - Use 'use client' directive for client-side interactivity
+    > - Include form fields: area (select), level (select), weekly_hours (number), duration_months (number), specific_objectives (textarea)
+    > - Use Tailwind CSS for styling with a modern, clean design
+    > - Include a submit button with loading state
+    > - Handle form submission with async/await
+    > - Call the /api/generate-plan endpoint
+    > - Emit events or callbacks to parent component with results
+    > - Add proper TypeScript types
     > ```
 
-> [!TIP]
-> The temperature parameter (set to 0.7 in the example) controls the randomness of the AI's response. Lower values (closer to 0) make responses more deterministic and focused, while higher values (closer to 1) make them more creative and varied. You can experiment with this value to find the right balance for educational content.
+3. The component should follow this structure:
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+
+interface StudyPlanFormProps {
+  onPlanGenerated: (plan: string) => void;
+}
+
+export default function StudyPlanForm({ onPlanGenerated }: StudyPlanFormProps) {
+  const [loading, setLoading] = useState(false);
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    // Call API
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Form fields */}
+    </form>
+  );
+}
+```
+
+## ⌨️ Activity: Create the Study Plan Display Component
+
+Now let's create a component to display the AI-generated study plan in a readable format.
+
+1. Create or open `nextjs-app/components/StudyPlanDisplay.tsx`.
+
+2. Use Copilot to implement the display component:
+
+    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
+    >
+    > ```prompt
+    > Create a React component to display study plans with these requirements:
+    >
+    > - Accept a plan prop with the AI-generated content
+    > - Use Tailwind CSS for beautiful, readable formatting
+    > - Display the plan with proper headings, lists, and spacing
+    > - Add a copy-to-clipboard button
+    > - Add a download as text/PDF button
+    > - Show a loading state while plan is being generated
+    > - Handle markdown formatting if the plan uses markdown
+    > - Add proper TypeScript types
+    > ```
+
+## ⌨️ Activity: Update the Home Page
+
+Let's integrate our components into the main page.
+
+1. Open `nextjs-app/app/page.tsx`.
+
+2. Update it to use our new components:
+
+    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
+    >
+    > ```prompt
+    > Update the home page to integrate StudyPlanForm and StudyPlanDisplay:
+    >
+    > - Import both components
+    > - Use state to manage the generated plan
+    > - Pass the onPlanGenerated callback to the form
+    > - Conditionally render the display component when a plan is generated
+    > - Add a hero section with app title and description
+    > - Use Tailwind CSS for a modern, responsive layout
+    > - Add proper TypeScript types
+    > ```
+
+3. The page structure should look like this:
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+import StudyPlanForm from '@/components/StudyPlanForm';
+import StudyPlanDisplay from '@/components/StudyPlanDisplay';
+
+export default function Home() {
+  const [generatedPlan, setGeneratedPlan] = useState<string>('');
+
+  return (
+    <main className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8">StudyPlan AI</h1>
+      <StudyPlanForm onPlanGenerated={setGeneratedPlan} />
+      {generatedPlan && <StudyPlanDisplay plan={generatedPlan} />}
+    </main>
+  );
+}
+```
+
+## ⌨️ Activity: Test the User Interface
+
+1. Ensure the development server is running (`npm run dev`).
+
+2. Open your browser to `http://localhost:3000`.
+
+3. Fill out the form with sample data:
+   - Area: Backend Development
+   - Level: Beginner
+   - Weekly Hours: 10
+   - Duration: 3 months
+   - Objectives: "Learn Node.js and build REST APIs"
+
+4. Click "Generate Study Plan" and verify:
+   - Loading state appears during generation
+   - Study plan displays correctly when complete
+   - Copy and download buttons work (if implemented)
+
+<details>
+  <summary>🤔 Styling Tips</summary>
+
+Use Tailwind CSS classes for consistent styling:
+- `bg-blue-500 hover:bg-blue-600` for buttons
+- `p-4 rounded-lg shadow-md` for cards
+- `space-y-4` for vertical spacing
+- `grid grid-cols-1 md:grid-cols-2` for responsive layouts
+
+</details>
 
 ---
 
-| [← Backend and AI Integration](03-step.md) | [Next: Crafting Prompts for AI →](05-step.md) |
+| [← API Routes and AI Integration](03-step.md) | [Next: Crafting Prompts for AI →](05-step.md) |
 |:-----------------------------------|------------------------------------------:|
-

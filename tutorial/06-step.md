@@ -1,53 +1,168 @@
 # Step 6: Adding Form Validation
 
 > **Summary:**
-> In this step, you'll use GitHub Copilot's Agent mode to implement validation for the Plan Parameters form, ensuring users complete all necessary fields before submission.
+> In this step, you'll implement client-side validation for the study plan form using React hooks and modern JavaScript validation techniques.
 
-Form validation is essential for web apps that collect user data. It ensures users provide required information in the correct format, gives immediate feedback on errors, and prevents the backend from receiving invalid or incomplete data. 
+## Why Form Validation Matters
 
-Currently, our study plan form allows users to submit without completing all fields, which can cause errors or incomplete plans.
+Form validation ensures:
+- Users provide all required information
+- Data is in the correct format before submission
+- Immediate feedback prevents frustration
+- Backend receives valid, complete data
 
-## ⌨️ Activity: Implement Form Validation with Copilot Agent
+## ⌨️ Activity: Implement Client-Side Validation
 
-Let's use GitHub Copilot's Agent mode to add validation to our form:
+Let's add comprehensive validation to our StudyPlanForm component.
 
-1. Open the **Copilot Chat** panel and switch to **Agent** mode.
+1. Open `nextjs-app/components/StudyPlanForm.tsx`.
 
-2. Provide the following instructions to the agent:
+2. Use Copilot to add validation logic:
 
-    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social\&logo=github%20copilot)
+    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
     >
     > ```prompt
-    > Modify the JavaScript code in the index.html file to add validation to the Plan Parameters form.
-    > 
-    > Implement JavaScript validation for the Plan Parameters form in index.html with these requirements:
-    > - Mark required fields visually to guide the user
-    > - Prevent form submission if any required field (area, level, weekly time, duration and specific objectives) is empty
-    > - Show specific error messages for missing fields
-    > - Highlight invalid fields with a red border
-    > - Remove the highlight when a field is corrected
+    > Add form validation to the StudyPlanForm component with these requirements:
+    >
+    > - Validate all required fields (area, level, weeklyHours, durationMonths, specificObjectives)
+    > - Show error messages for empty or invalid fields
+    > - Highlight invalid fields with red borders
+    > - Validate number ranges: weeklyHours (1-168), durationMonths (1-24)
+    > - Validate textarea minimum length (10 characters)
+    > - Clear errors when fields are corrected
+    > - Prevent form submission if validation fails
+    > - Add TypeScript types for error state
     > ```
 
-### 🧪 Test the Form Validation
+3. Implement validation using React state:
 
-After implementing the validation, test it to ensure it works as expected:
+```typescript
+const [errors, setErrors] = useState<{[key: string]: string}>({});
 
-1. Run the application if it's not already running
-2. Try clicking the "Generate Study Plan" button without filling any fields
-3. Verify that error messages appear for all required fields
-4. Fill in some fields and try again to verify that error messages persist only on empty fields
-5. Fill in all required fields and verify that the form submits correctly
+const validateForm = () => {
+  const newErrors: {[key: string]: string} = {};
+  
+  if (!area) newErrors.area = 'Please select an area';
+  if (!level) newErrors.level = 'Please select a level';
+  if (weeklyHours < 1 || weeklyHours > 168) {
+    newErrors.weeklyHours = 'Hours must be between 1 and 168';
+  }
+  // ... more validations
+  
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
-### 📝 Implementation Considerations
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+  // Proceed with submission
+};
+```
 
-When using GitHub Copilot Agent for this task, observe how it:
+## ⌨️ Activity: Add Visual Feedback
 
-1. Analyzes the existing HTML and JavaScript structure
-2. Maintains consistency with the existing code
-3. Implements a solution that integrates seamlessly with the existing flow
-4. Adds visual feedback to enhance the user experience
+Enhance the user experience with clear visual indicators.
 
-Form validation is an excellent opportunity to use GitHub Copilot's Agent mode as it involves understanding existing code structure, adding validation logic, and enhancing user experience—tasks that the Copilot Agent can efficiently accomplish with a single clear instruction.
+1. Update your form fields to show validation state:
+
+```typescript
+<input
+  type="number"
+  value={weeklyHours}
+  onChange={(e) => setWeeklyHours(Number(e.target.value))}
+  className={`
+    w-full px-4 py-2 border rounded-lg
+    ${errors.weeklyHours ? 'border-red-500' : 'border-gray-300'}
+    focus:outline-none focus:ring-2 focus:ring-blue-500
+  `}
+/>
+{errors.weeklyHours && (
+  <p className="text-red-500 text-sm mt-1">{errors.weeklyHours}</p>
+)}
+```
+
+2. Add a helper function to clear errors on input change:
+
+```typescript
+const handleInputChange = (field: string, value: any) => {
+  // Clear error for this field
+  if (errors[field]) {
+    setErrors(prev => {
+      const newErrors = {...prev};
+      delete newErrors[field];
+      return newErrors;
+    });
+  }
+  // Update field value
+  // ...
+};
+```
+
+## ⌨️ Activity: Implement Advanced Validation
+
+Add more sophisticated validation rules:
+
+1. Use Copilot to add pattern matching and custom validation:
+
+    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
+    >
+    > ```prompt
+    > Add advanced validation features:
+    >
+    > - Prevent special characters in text fields (allow only letters, numbers, spaces)
+    > - Validate that specific objectives is meaningful (not just random characters)
+    > - Add real-time validation as user types (debounced)
+    > - Show character count for textarea (minimum 10, maximum 500)
+    > - Add success indicators (green checkmarks) for valid fields
+    > - Create a validation summary showing all errors at once
+    > ```
+
+## 🧪 Test the Form Validation
+
+After implementing validation, thoroughly test it:
+
+1. Try submitting the form with all fields empty
+2. Enter invalid values (negative numbers, excessive hours)
+3. Enter very short objectives (< 10 characters)
+4. Fill fields correctly and verify errors clear
+5. Check that success indicators appear for valid fields
+6. Test that form only submits when all validations pass
+
+### Test Cases
+
+| Test | Expected Behavior |
+|------|-------------------|
+| Submit empty form | Show errors on all required fields |
+| Enter 0 weekly hours | Show "must be at least 1" error |
+| Enter 200 weekly hours | Show "maximum 168 hours" error |
+| Type 5-char objective | Show "minimum 10 characters" error |
+| Fix invalid field | Error disappears, success indicator appears |
+| All fields valid | Form submits successfully |
+
+## Best Practices
+
+1. **Validate Early**: Check inputs as users type (with debouncing)
+2. **Clear Messaging**: Error messages should be specific and helpful
+3. **Visual Hierarchy**: Use colors and icons to indicate status
+4. **Accessibility**: Ensure error messages are announced to screen readers
+5. **Progressive Enhancement**: Validate on client, re-validate on server
+
+<details>
+  <summary>🎨 Styling Tips for Validation States</summary>
+
+```typescript
+// Error state
+className="border-red-500 bg-red-50 focus:ring-red-500"
+
+// Success state  
+className="border-green-500 bg-green-50 focus:ring-green-500"
+
+// Default state
+className="border-gray-300 bg-white focus:ring-blue-500"
+```
+
+</details>
 
 ---
 

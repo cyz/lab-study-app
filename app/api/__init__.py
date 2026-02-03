@@ -1,3 +1,0 @@
-"""
-API do StudyPlan AI
-"""

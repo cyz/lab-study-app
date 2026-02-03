@@ -1,3 +1,0 @@
-"""
-StudyPlan AI - Aplicação principal
-"""

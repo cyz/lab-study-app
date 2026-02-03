@@ -1,7 +1,7 @@
 # Step 1: Introduction to StudyPlan App and Environment Setup
 
 > **Summary:**
-> In this step, you will set up your Python environment, ensure all dependencies are installed, and understand the architecture of the StudyPlan project.
+> In this step, you will set up your development environment with Next.js, ensure all dependencies are installed, and understand the architecture of the StudyPlan project.
 
 ## What is StudyPlan?
 
@@ -13,7 +13,7 @@ The diagram below illustrates the core interaction flow between components:
 
 ```mermaid
 graph LR
-    A[User] -->|1. Submits Profile Data| B[StudyPlan API]
+    A[User] -->|1. Submits Profile Data| B[Next.js API Route]
     B -->|2. Formats Request| C[GitHub AI Models]
     C -->|3. Generates Plan| B
     B -->|4. Returns Structured Plan| A
@@ -22,12 +22,13 @@ graph LR
 
 ### Technical Architecture
 
-The application follows a simple, modular architecture:
+The application follows a modern, modular architecture:
 
-- **Frontend**: HTML/CSS interface with Tailwind CSS for styling and user interactions
-- **Backend**: Python Flask application handling HTTP requests and REST API endpoints
+- **Frontend**: React with Next.js for server-side rendering and routing
+- **Styling**: Tailwind CSS for modern, responsive design
+- **Backend**: Next.js API Routes handling HTTP requests
 - **AI Integration**: Communication layer with GitHub AI Models for study plan generation
-- **Data Flow**: User input is processed through the API layer, sent to AI services, and returned as structured educational content
+- **Data Flow**: User input is processed through API routes, sent to AI services, and returned as structured educational content
 
 ## ⌨️ Activity: Clone Your Lab Repository
 
@@ -56,76 +57,55 @@ Let's create the repository you'll use for your workshop.
        <img src="images/1-create-codespace.png" alt="Screenshot of Create codespace on main" />
    </details>
 
-2. Validate the **Copilot Chat** and **Python** extensions are installed and enabled.
+2. Validate the **Copilot Chat** extension is installed and enabled.
 
 3. In your Codespace, open the **Copilot Chat** panel and make sure **Ask** mode is selected. This will allow you to ask Copilot questions about the project.
 
    > ![Static Badge](https://img.shields.io/badge/-Prompt-text?style=social&logo=github%20copilot)
    >
    > ```prompt
-   > How does the StudyPlan app work?
+   > How does the StudyPlan app work with Next.js?
    > ```
 
-4. Since you're working in a pre-configured environment, most dependencies should already be available. You can verify the essential libraries with:
+4. Since you're working in a pre-configured environment, most dependencies should already be available. You can verify by checking the package.json:
 
     ```bash
-    # Check if essential libraries are available
-    pip list | grep -E "flask|python-dotenv|requests|jinja2|Werkzeug"
+    # Check if essential dependencies are available
+    cat package.json | grep -E "next|react|tailwind"
     ```
 
    <details>
       <summary>🖥️ Working locally?</summary>
       
-      **For local environment users (Windows):**
+      **For local environment users:**
 
-      If you're setting up the environment on your local Windows machine, follow these steps:
-
-      ```bash
-      # Create a Python virtual environment to isolate dependencies
-      python -m venv venv
-
-      # Activate the virtual environment in PowerShell
-      .\venv\Scripts\Activate.ps1
-
-      # OR for Windows CMD:
-      # venv\Scripts\activate.bat
-
-      # Install all dependencies listed in requirements.txt
-      pip install -r requirements.txt
-      ```
-
-      **For local environment users (Linux/Mac):**
-
-      If you're setting up the environment on your local Linux/Mac machine, follow these steps:
+      If you're setting up the environment on your local machine, follow these steps:
 
       ```bash
-      python -m venv venv
-      source venv/bin/activate
-      pip install -r requirements.txt
+      # Install Node.js dependencies
+      npm install
+
+      # Or using yarn
+      yarn install
+
+      # Or using pnpm
+      pnpm install
       ```
    </details>
 
-5. Verify our application runs before modification. In the left sidebar, select the **Run and Debug** tab and then press the **Start Debugging** icon.
+5. Verify our application runs before modification. In the terminal, run:
 
-   <details>
-      <summary>📸 Show screenshot</summary>
-       <img src="images/1-start-debug.png" alt="Screenshot of Run and Debug tab" />
-   </details>
+    ```bash
+    npm run dev
+    ```
 
    <details>
       <summary>🤔 How it works?</summary><br/>
    
-      The `launch.json` file in the `.vscode` folder defines debugging configurations for VS Code. It allows you to start the application in debug mode with a single click, set breakpoints to examine variables during execution, step through code, and view logs and outputs in real-time. This configuration is already prepared specifically for this Flask project.
+      The `npm run dev` command starts the Next.js development server with hot-reload enabled. This means any changes you make to the code will automatically be reflected in the browser without needing to restart the server.
    </details>
 
-   <details>
-      <summary>🤷 Having trouble?</summary><br/>
-
-    If the **Run and Debug** area is empty, try reloading VS Code: Open the command palette (`Ctrl`+`Shift`+`P`) and search for `Developer: Reload Window`.
-
-   </details>
-
-6. In your **Terminal**, use the **Ports** tab to find the webpage address. You'll see port ``8000`` listed - click the globe icon (🌐) to open the application in your browser or right-click and select "Open in Browser".
+6. In your **Terminal**, use the **Ports** tab to find the webpage address. You'll see port `3000` listed - click the globe icon (🌐) to open the application in your browser or right-click and select "Open in Browser".
 
      <details>
       <summary>📸 Show screenshot</summary>
@@ -134,7 +114,7 @@ Let's create the repository you'll use for your workshop.
    </details>
 
 > [!TIP]
-> Debug mode is a powerful learning tool. You can see exactly what's happening in the code during execution, pause execution at specific points using breakpoints, inspect variable values in real-time, and more easily identify the cause of possible errors.
+> Development mode provides hot-reload functionality. You can see changes in real-time as you modify your code, making the development process faster and more interactive.
 
 ## ⌨️ Activity: Configure Your GitHub Token
 
@@ -149,13 +129,13 @@ Let's set up your token:
    - Expiration: 30 days
    - Scopes: check only `read:user`
 
-3. **Configure the token**: Rename the `.env.example` file to `.env` and add your token inside it.
+3. **Configure the token**: Create a `.env.local` file in the root directory and add your token:
 
 ```
 GITHUB_TOKEN=your_token_here
 ```
 
-The `.env` file is used to store sensitive configuration values, such as access tokens, and should never be hardcoded in the source code. To keep these secrets safe, the `.env` file is already included in `.gitignore`, ensuring it won’t be accidentally committed to the repository.
+The `.env.local` file is used to store sensitive configuration values, such as access tokens, and should never be hardcoded in the source code. To keep these secrets safe, the `.env.local` file is already included in `.gitignore`, ensuring it won't be accidentally committed to the repository.
 
 ---
 

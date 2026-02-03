@@ -6,8 +6,8 @@
 
 1. [Environment Setup and Introduction to StudyPlan AI](01-step.md)
 2. [Application Structure Overview](02-step.md)
-3. [Backend and AI Integration](03-step.md)
-4. [Data Models and API Endpoint](04-step.md)
+3. [API Routes and AI Integration](03-step.md)
+4. [Building the User Interface](04-step.md)
 5. [Crafting Prompts for AI](05-step.md)
 6. [Adding Form Validation](06-step.md)
 7. [Creating Custom Chat Modes for Accessibility Testing](07-step.md)
