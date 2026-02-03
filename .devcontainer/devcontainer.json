@@ -1,51 +1,52 @@
 {
-  "name": "Python 3",
+  "name": "Next.js 14 + TypeScript",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": "..",
-    "args": {
-      "VARIANT": "3.10-bullseye"
-    }
+    "context": ".."
   },
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "18"
-    },
-    "ghcr.io/devcontainers/features/python:1": {}
+    }
   },
-  "forwardPorts": [8000],
+  "forwardPorts": [
+    3000
+  ],
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "app/main.py"
+        "nextjs-app/README.md",
+        "nextjs-app/app/page.tsx"
       ]
     },
     "vscode": {
       "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
         "GitHub.copilot",
         "GitHub.copilot-chat"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/home/vscode/venv/bin/python",
-        "python.linting.enabled": true,
-        "python.formatting.provider": "black",
         "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
         "chat.agent.enabled": true,
         "chat.mcp.enabled": true
       }
     }
   },
-  "postCreateCommand": "pip install -r requirements.txt",
+  "postCreateCommand": "cd nextjs-app && npm install",
   "postAttachCommand": {
-    "server": "/home/vscode/venv/bin/python app.py"
+    "server": "cd nextjs-app && npm run dev"
   },
   "portsAttributes": {
-    "8000": {
-      "label": "Application",
+    "3000": {
+      "label": "Next.js Application",
       "onAutoForward": "openPreview"
     }
   },
-  "remoteUser": "vscode"
+  "remoteUser": "node"
 }

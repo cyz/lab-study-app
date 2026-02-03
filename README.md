@@ -1,6 +1,8 @@
 # Hands-on with GitHub Copilot: Building AI-Powered Study Plans with GitHub Models
 
-This lab will guide you through creating personalized learning paths using GitHub's AI models. You'll work with a Flask-based web application that generates customized study plans for technology professionals based on their interests, skill level, and available time.
+This lab will guide you through creating personalized learning paths using GitHub's AI models. You'll work with a **Next.js 14 + TypeScript** web application that generates customized study plans for technology professionals based on their interests, skill level, and available time.
+
+> ⚠️ **Note**: This application was migrated from Python/Flask to Next.js. See [MIGRATION_COMPLETE.md](MIGRATION_COMPLETE.md) for details.
 
 Don't forget to [star (🌟) this repo](https://docs.github.com/en/get-started/exploring-projects-on-github/saving-repositories-with-stars) to find it easier later.
 
@@ -8,7 +10,7 @@ Don't forget to [star (🌟) this repo](https://docs.github.com/en/get-started/e
 
 ## 📋Prerequisites
 
-- Python 3.9+ installed
+- Node.js 18+ installed
 - VS Code or Codespaces with GitHub Copilot extension
 - GitHub account with GitHub Copilot subscription (which is available for free for individuals)
 
@@ -16,7 +18,7 @@ Don't forget to [star (🌟) this repo](https://docs.github.com/en/get-started/e
 
 The StudyPlan AI application consists of two main components:
 
-- A Flask-based web interface for user interaction.
+- A Next.js-based web interface with React components for user interaction.
 - An AI integration layer that uses GitHub Models to create the study plans based on user input and preferences.
 
 You'll learn how to configure the application, create custom study plans, and modify the AI prompts to enhance the generated content.
@@ -40,12 +42,12 @@ You'll learn how to configure the application, create custom study plans, and mo
 - [VS Code](https://code.visualstudio.com/)
 - [GitHub Copilot FREE for VS Code](https://aka.ms/Copilot-Free/y)
 - [GitHub Models Playground](https://github.com/marketplace/models)
-- [Flask Documentation](https://flask.palletsprojects.com/)
-
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Next.js App](nextjs-app/README.md) - Quick start guide for the migrated application
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit [Contributor License Agreements](https://cla.opensource.microsoft.com).
 

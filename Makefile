@@ -41,7 +41,6 @@ clean: ## Remove temporary files and caches
 	rm -rf node_modules
 	rm -rf out
 	find . -type f -name "*.log" -delete
-	${PIP} install black flake8 pytest pytest-cov mypy
 
 build: ## Build Docker image
 	@echo "Building Docker image..."
